@@ -31,6 +31,32 @@
 $ pnpm install
 ```
 
+## Database (MySQL via Docker + Prisma)
+
+Start MySQL (database `study-nest`):
+
+```bash
+$ pnpm db:up      # docker compose up -d
+$ pnpm db:down    # docker compose down (add -v to wipe data)
+```
+
+Copy `.env.example` to `.env` (already provided) and adjust credentials if needed. Then generate the Prisma client and apply migrations:
+
+```bash
+$ pnpm prisma:generate        # generate client into src/generated/prisma
+$ pnpm prisma:migrate         # create/apply a dev migration
+$ pnpm prisma:deploy          # apply migrations in production
+$ pnpm prisma:studio          # browse data
+```
+
+`PrismaService` is exported globally from `PrismaModule` - inject it anywhere:
+
+```ts
+constructor(private readonly prisma: PrismaService) {}
+```
+
+Connection settings live in `docker-compose.yml` (MySQL 8.4) and `.env` (`DATABASE_URL`). Prisma 7 uses the `@prisma/adapter-mariadb` driver adapter (configured in `src/prisma/prisma.service.ts`).
+
 ## Compile and run the project
 
 ```bash
