@@ -77,6 +77,8 @@ ecosystem.config.cjs     # PM2 部署配置
 
 `GET /im/usersig` 需要 JWT 登录态，使用当前用户数据库 ID 作为腾讯 IM UserID，返回 SDKAppID、UserID、UserSig 和过期时间。腾讯配置未填写时接口返回 503；密钥不会返回给客户端。
 
+Prisma 的 MariaDB 驱动会启用 `allowPublicKeyRetrieval`，以兼容要求 RSA 公钥的 MySQL 认证方式。生产数据库连接建议同时启用 TLS。
+
 缺少必填变量或 `JWT_SECRET` 少于 32 字节时，应用会在启动阶段直接报错。不要将真实 `.env` 提交到版本库；部署时通过密钥管理服务或进程环境注入这些值。
 
 ## API

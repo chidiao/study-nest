@@ -3,6 +3,12 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { requireEnv } from '../config/env';
 import { PrismaClient } from '../generated/prisma/client';
 
+function withPublicKeyRetrieval(connectionString: string): string {
+  const url = new URL(connectionString);
+  url.searchParams.set('allowPublicKeyRetrieval', 'true');
+  return url.toString();
+}
+
 @Injectable()
 export class PrismaService
   extends PrismaClient
@@ -10,7 +16,9 @@ export class PrismaService
 {
   constructor() {
     super({
-      adapter: new PrismaMariaDb(requireEnv('DATABASE_URL')),
+      adapter: new PrismaMariaDb(
+        withPublicKeyRetrieval(requireEnv('DATABASE_URL')),
+      ),
     });
   }
 
