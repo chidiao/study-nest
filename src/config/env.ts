@@ -47,7 +47,9 @@ export function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value || !value.trim()) {
     const files = loadedFiles.length
-      ? loadedFiles.map((file) => file.replace(PROJECT_ROOT, '<root>')).join(', ')
+      ? loadedFiles
+          .map((file) => file.replace(PROJECT_ROOT, '<root>'))
+          .join(', ')
       : '(未找到任何 .env 文件)';
     throw new Error(
       `[config] 缺少必需的环境变量 ${key}。\n` +
@@ -66,7 +68,12 @@ export function optionalEnv(key: string, fallback: string): string {
 
 export function validateEnv(): void {
   requireEnv('DATABASE_URL');
-  requireEnv('JWT_SECRET');
+  const jwtSecret = requireEnv('JWT_SECRET');
+  if (Buffer.byteLength(jwtSecret, 'utf8') < 32) {
+    throw new Error(
+      '[config] JWT_SECRET 至少需要 32 字节，请使用随机生成的强密钥。',
+    );
+  }
 }
 
 export { PROJECT_ROOT };
